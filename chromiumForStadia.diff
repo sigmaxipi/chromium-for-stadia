@@ -1,5 +1,5 @@
 diff --git a/chrome/android/java/AndroidManifest.xml b/chrome/android/java/AndroidManifest.xml
-index 8f7d52132db7..28f580be3e2b 100644
+index 87268b157d10..b9cfdf9b1c11 100644
 --- a/chrome/android/java/AndroidManifest.xml
 +++ b/chrome/android/java/AndroidManifest.xml
 @@ -17,6 +17,7 @@ by a child template that "extends" this file.
@@ -52,3 +52,24 @@ index 38a6cb45240d..29f971b78497 100644
    }
  
    pad.connected = true;
+diff --git a/third_party/blink/renderer/core/dom/document_or_shadow_root.h b/third_party/blink/renderer/core/dom/document_or_shadow_root.h
+index 6e0427e35662..2db92a951695 100644
+--- a/third_party/blink/renderer/core/dom/document_or_shadow_root.h
++++ b/third_party/blink/renderer/core/dom/document_or_shadow_root.h
+@@ -62,6 +62,8 @@ class DocumentOrShadowRoot {
+ 
+   static Element* pointerLockElement(Document& document) {
+     UseCounter::Count(document, WebFeature::kDocumentPointerLockElement);
++    return Fullscreen::FullscreenElementForBindingFrom(document);
++    /*
+     const Element* target = document.PointerLockElement();
+     if (!target)
+       return nullptr;
+@@ -75,6 +77,7 @@ class DocumentOrShadowRoot {
+       return const_cast<Element*>(target);
+     }
+     return document.AdjustedElement(*target);
++    */
+   }
+ 
+   static Element* pointerLockElement(ShadowRoot& shadow_root) {
