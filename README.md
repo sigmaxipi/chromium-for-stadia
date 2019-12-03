@@ -18,9 +18,10 @@ Note that this app is not officially supported by Google nor Oculus and may unex
 [This reddit post](https://www.reddit.com/r/Stadia/comments/e11897/how_to_get_stadia_running_in_android_chrome_on/) has some more notes on how to get Stadia working in the browser without using a custom app. The app was just meant to streamline those instructions.
 
 ## Release notes
-
+12/2/2019 - Update 32-bit apk with pointerlock fix.
 12/1/2019 - Fixed [an issue](https://www.reddit.com/r/Stadia/comments/e18a9s/instructions_for_running_google_stadia_on_the/f8tknkq/?context=3) where holding the trigger buttons on the Stadia controller causes a pop up due to loss of pointerlock.
 
 ## Known issues
 
-* Sometimes the loading spinner gets stuck and then there is a "Reopen game to play" message. It's unclear why this happens but clearing local storage for Stadia via typing `javascript:window.localStorage.clear()` in the location bar when you're at stadia.google.com/home may help. This can fix an issue where `window.localStorage['video_codec_implementation_by_codec_key']` is set incorrectly.
+* https://github.com/sigmaxipi/chromium-for-stadia/issues/3 Sometimes the loading spinner gets stuck and then there is a "Reopen game to play" message. It's unclear why this happens but clearing local storage for Stadia via typing `javascript:window.localStorage.clear()` in the location bar when you're at stadia.google.com/home may help. This can fix an issue where `window.localStorage['video_codec_implementation_by_codec_key']` is set incorrectly.
+* https://github.com/sigmaxipi/chromium-for-stadia/issues/4 Some people get an error saying "You are trying to sign in from a browser or app that doesn't allow us to keep your account secure" when they try to log in. This may be due to https://security.googleblog.com/2019/04/better-protection-against-man-in-middle.html
