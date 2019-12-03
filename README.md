@@ -19,8 +19,9 @@ Note that this app is not officially supported by Google nor Oculus and may unex
 [This reddit post](https://www.reddit.com/r/Stadia/comments/e11897/how_to_get_stadia_running_in_android_chrome_on/) has some more notes on how to get Stadia working in the browser without using a custom app. The app was just meant to streamline those instructions.
 
 ## Release notes
-12/2/2019 - Delete standalone 32-bit apk and make the main apk 32-bit. Workaround infinite loading issue by spoofing localStorage write. 
-12/1/2019 - Fixed [an issue](https://www.reddit.com/r/Stadia/comments/e18a9s/instructions_for_running_google_stadia_on_the/f8tknkq/?context=3) where holding the trigger buttons on the Stadia controller causes a pop up due to loss of pointerlock.
+
+* 12/2/2019 - Delete standalone 32-bit apk and make the main apk 32-bit. Workaround infinite loading issue by spoofing localStorage write. 
+* 12/1/2019 - Fixed [an issue](https://www.reddit.com/r/Stadia/comments/e18a9s/instructions_for_running_google_stadia_on_the/f8tknkq/?context=3) where holding the trigger buttons on the Stadia controller causes a pop up due to loss of pointerlock.
 
 ## Known issues
 
