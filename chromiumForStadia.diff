@@ -39,6 +39,60 @@ index 37e72394997a..c0bec3a06524 100644
        WEBKIT_VERSION_MAJOR,
        WEBKIT_VERSION_MINOR,
        product.c_str(),
+diff --git a/device/gamepad/android/java/src/org/chromium/device/gamepad/GamepadMappings.java b/device/gamepad/android/java/src/org/chromium/device/gamepad/GamepadMappings.java
+index b7ccaa45ef1c..6458212e3333 100644
+--- a/device/gamepad/android/java/src/org/chromium/device/gamepad/GamepadMappings.java
++++ b/device/gamepad/android/java/src/org/chromium/device/gamepad/GamepadMappings.java
+@@ -377,30 +377,30 @@ abstract class GamepadMappings {
+                 float[] mappedAxes, float[] mappedButtons, float[] rawAxes, float[] rawButtons) {
+             float a = rawButtons[KeyEvent.KEYCODE_BUTTON_A];
+             float b = rawButtons[KeyEvent.KEYCODE_BUTTON_B];
+-            float c = rawButtons[KeyEvent.KEYCODE_BUTTON_C];
+             float x = rawButtons[KeyEvent.KEYCODE_BUTTON_X];
+-            mappedButtons[CanonicalButtonIndex.PRIMARY] = b;
+-            mappedButtons[CanonicalButtonIndex.SECONDARY] = c;
+-            mappedButtons[CanonicalButtonIndex.TERTIARY] = a;
+-            mappedButtons[CanonicalButtonIndex.QUATERNARY] = x;
+-
+             float y = rawButtons[KeyEvent.KEYCODE_BUTTON_Y];
+-            float z = rawButtons[KeyEvent.KEYCODE_BUTTON_Z];
+-            mappedButtons[CanonicalButtonIndex.LEFT_SHOULDER] = y;
+-            mappedButtons[CanonicalButtonIndex.RIGHT_SHOULDER] = z;
+-
+-            float rx = rawAxes[MotionEvent.AXIS_RX];
+-            float ry = rawAxes[MotionEvent.AXIS_RY];
+-            mappedButtons[CanonicalButtonIndex.LEFT_TRIGGER] = scaleRxRy(rx);
+-            mappedButtons[CanonicalButtonIndex.RIGHT_TRIGGER] = scaleRxRy(ry);
+-
+-            float share = rawButtons[KeyEvent.KEYCODE_BUTTON_L2];
+-            float options = rawButtons[KeyEvent.KEYCODE_BUTTON_R2];
++            mappedButtons[CanonicalButtonIndex.PRIMARY] = a;
++            mappedButtons[CanonicalButtonIndex.SECONDARY] = b;
++            mappedButtons[CanonicalButtonIndex.TERTIARY] = x;
++            mappedButtons[CanonicalButtonIndex.QUATERNARY] = y;
++
++            float l1 = rawButtons[KeyEvent.KEYCODE_BUTTON_L1];
++            float r1 = rawButtons[KeyEvent.KEYCODE_BUTTON_R1];
++            mappedButtons[CanonicalButtonIndex.LEFT_SHOULDER] = l1;
++            mappedButtons[CanonicalButtonIndex.RIGHT_SHOULDER] = r1;
++
++            float l2 = rawAxes[MotionEvent.AXIS_LTRIGGER];
++            float r2 = rawAxes[MotionEvent.AXIS_RTRIGGER];
++            mappedButtons[CanonicalButtonIndex.LEFT_TRIGGER] = l2;
++            mappedButtons[CanonicalButtonIndex.RIGHT_TRIGGER] = r2;
++
++            float share = rawButtons[KeyEvent.KEYCODE_BUTTON_SELECT];
++            float options = rawButtons[KeyEvent.KEYCODE_BUTTON_START];
+             mappedButtons[CanonicalButtonIndex.BACK_SELECT] = share;
+             mappedButtons[CanonicalButtonIndex.START] = options;
+ 
+-            float thumbL = rawButtons[KeyEvent.KEYCODE_BUTTON_SELECT];
+-            float thumbR = rawButtons[KeyEvent.KEYCODE_BUTTON_START];
++            float thumbL = rawButtons[KeyEvent.KEYCODE_BUTTON_THUMBL];
++            float thumbR = rawButtons[KeyEvent.KEYCODE_BUTTON_THUMBR];
+             mappedButtons[CanonicalButtonIndex.LEFT_THUMBSTICK] = thumbL;
+             mappedButtons[CanonicalButtonIndex.RIGHT_THUMBSTICK] = thumbR;
+ 
 diff --git a/device/gamepad/gamepad_platform_data_fetcher_android.cc b/device/gamepad/gamepad_platform_data_fetcher_android.cc
 index 38a6cb45240d..29f971b78497 100644
 --- a/device/gamepad/gamepad_platform_data_fetcher_android.cc

@@ -20,6 +20,7 @@ Note that this app is not officially supported by Google nor Oculus and may unex
 
 ## Release notes
 
+* 12/3/2019 - Added support for PS4 Dualshock controllers by updating the mapping to work around https://github.com/sigmaxipi/chromium-for-stadia/issues/5
 * 12/2/2019 - Delete standalone 32-bit apk and make the main apk 32-bit. Workaround infinite loading issue by spoofing localStorage write. 
 * 12/1/2019 - Fixed [an issue](https://www.reddit.com/r/Stadia/comments/e18a9s/instructions_for_running_google_stadia_on_the/f8tknkq/?context=3) where holding the trigger buttons on the Stadia controller causes a pop up due to loss of pointerlock.
 
