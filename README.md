@@ -11,7 +11,7 @@ The `ChromiumForStadia.apk` was created using the following steps:
    * Modifying `third_party/blink/renderer/modules/storage/storage_area.cc` to spoof setting a problematic key related to video codec. This was caused by a bug in the Chromium codebase between Nov 24 and Dec 1, and this hack should be reverted at some point.
    * Modifying `device/gamepad/android/java/src/org/chromium/device/gamepad/GamepadMappings.java` to properly map PS4 controllers. This may cause issues on pre-Android 10 devices: https://github.com/sigmaxipi/chromium-for-stadia/issues/5
 
-With these changes, going to [stadia.google.com](https://stadia.google.com) in this app will allow you to stream Stadia to the browser on Android devices. You can also use unsupported USB & Bluetooth controllers with the browser. You can test your gamepad at [html5gamepad.com/](https://html5gamepad.com/).
+With these changes, going to [stadia.google.com](https://stadia.google.com) in this app and enabling **Desktop Mode** will allow you to stream Stadia to the browser on Android devices. You can also use unsupported USB & Bluetooth controllers with the browser. You can test your gamepad at [html5gamepad.com/](https://html5gamepad.com/).
 
 This app was tested on a Pixel 4 & Oculus Quest using an [ASUS Bluetooth Gamepad](https://www.asus.com/us/Home-Entertainment/Gamepad-TV500BG/), PS4 Dualshock, and the official Stadia controller via USB C.
 
