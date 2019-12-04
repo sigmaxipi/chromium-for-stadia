@@ -26,19 +26,6 @@ index 87268b157d10..b9cfdf9b1c11 100644
                  <category android:name="android.intent.category.NOTIFICATION_PREFERENCES" />
                  {% if enable_vr == "true" %}
                  <category android:name="com.google.intent.category.DAYDREAM" />
-diff --git a/content/common/user_agent.cc b/content/common/user_agent.cc
-index 37e72394997a..c0bec3a06524 100644
---- a/content/common/user_agent.cc
-+++ b/content/common/user_agent.cc
-@@ -194,7 +194,7 @@ std::string BuildUserAgentFromOSAndProduct(const std::string& os_info,
-   base::StringAppendF(
-       &user_agent,
-       "Mozilla/5.0 (%s) AppleWebKit/%d.%d (KHTML, like Gecko) %s Safari/%d.%d",
--      os_info.c_str(),
-+      "X11; Linux x86_64",
-       WEBKIT_VERSION_MAJOR,
-       WEBKIT_VERSION_MINOR,
-       product.c_str(),
 diff --git a/device/gamepad/android/java/src/org/chromium/device/gamepad/GamepadMappings.java b/device/gamepad/android/java/src/org/chromium/device/gamepad/GamepadMappings.java
 index b7ccaa45ef1c..6458212e3333 100644
 --- a/device/gamepad/android/java/src/org/chromium/device/gamepad/GamepadMappings.java
