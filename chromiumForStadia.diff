@@ -1,5 +1,5 @@
 diff --git a/chrome/android/java/AndroidManifest.xml b/chrome/android/java/AndroidManifest.xml
-index 87268b157d10..b9cfdf9b1c11 100644
+index 853ec785e2fe..67630c54ec30 100644
 --- a/chrome/android/java/AndroidManifest.xml
 +++ b/chrome/android/java/AndroidManifest.xml
 @@ -17,6 +17,7 @@ by a child template that "extends" this file.
@@ -10,7 +10,7 @@ index 87268b157d10..b9cfdf9b1c11 100644
  
      <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
      <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-@@ -126,6 +127,7 @@ by a child template that "extends" this file.
+@@ -127,6 +128,7 @@ by a child template that "extends" this file.
           Java heap limit (32Mb on Nexus S, 48Mb on Xoom). -->
      <application android:name="{% block application_name %}org.chromium.chrome.browser.ChromeApplication{% endblock %}"
          android:icon="@drawable/ic_launcher"
@@ -18,7 +18,7 @@ index 87268b157d10..b9cfdf9b1c11 100644
          android:roundIcon="@drawable/ic_launcher_round"
          android:label="{% block application_label %}@string/app_name{% endblock %}"
          android:largeHeap="false"
-@@ -229,6 +231,7 @@ by a child template that "extends" this file.
+@@ -213,6 +215,7 @@ by a child template that "extends" this file.
              android:exported="true">
              <intent-filter>
                  <action android:name="android.intent.action.MAIN" />
@@ -26,80 +26,21 @@ index 87268b157d10..b9cfdf9b1c11 100644
                  <category android:name="android.intent.category.NOTIFICATION_PREFERENCES" />
                  {% if enable_vr == "true" %}
                  <category android:name="com.google.intent.category.DAYDREAM" />
-diff --git a/device/gamepad/android/java/src/org/chromium/device/gamepad/GamepadMappings.java b/device/gamepad/android/java/src/org/chromium/device/gamepad/GamepadMappings.java
-index b7ccaa45ef1c..8544393dd8d3 100644
---- a/device/gamepad/android/java/src/org/chromium/device/gamepad/GamepadMappings.java
-+++ b/device/gamepad/android/java/src/org/chromium/device/gamepad/GamepadMappings.java
-@@ -63,7 +63,11 @@ abstract class GamepadMappings {
-                 && (productId == PS_DUALSHOCK_4_PRODUCT_ID
-                            || productId == PS_DUALSHOCK_4_SLIM_PRODUCT_ID
-                            || productId == PS_DUALSHOCK_4_USB_RECEIVER_PRODUCT_ID)) {
--            return new PS4GamepadMappings();
-+            if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-+              return new PS4NewGamepadMappings();
-+            } else {
-+              return new PS4GamepadMappings();
-+            }
-         }
-         // Microsoft released a firmware update for the Xbox One S gamepad that modified the button
-         // and axis assignments. With the new firmware, these gamepads work correctly in Android
-@@ -407,6 +411,56 @@ abstract class GamepadMappings {
-             float mode = rawButtons[KeyEvent.KEYCODE_BUTTON_MODE];
-             mappedButtons[CanonicalButtonIndex.META] = mode;
- 
-+            mapHatAxisToDpadButtons(mappedButtons, rawAxes);
-+            mapXYAxes(mappedAxes, rawAxes);
-+        }
-+    }
-+
-+    static class PS4NewGamepadMappings extends GamepadMappings {
-+        // Scale input from [-1, 1] to [0, 1] uniformly.
-+        private static float scaleRxRy(float input) {
-+            return 1.f - ((1.f - input) / 2.f);
-+        }
-+
-+        /**
-+         * Method for mapping PS4 gamepad axis and button values
-+         * to standard gamepad button and axes values.
-+         */
-+        @Override
-+        public void mapToStandardGamepad(
-+                float[] mappedAxes, float[] mappedButtons, float[] rawAxes, float[] rawButtons) {
-+            float a = rawButtons[KeyEvent.KEYCODE_BUTTON_A];
-+            float b = rawButtons[KeyEvent.KEYCODE_BUTTON_B];
-+            float x = rawButtons[KeyEvent.KEYCODE_BUTTON_X];
-+            float y = rawButtons[KeyEvent.KEYCODE_BUTTON_Y];
-+            mappedButtons[CanonicalButtonIndex.PRIMARY] = a;
-+            mappedButtons[CanonicalButtonIndex.SECONDARY] = b;
-+            mappedButtons[CanonicalButtonIndex.TERTIARY] = x;
-+            mappedButtons[CanonicalButtonIndex.QUATERNARY] = y;
-+
-+            float l1 = rawButtons[KeyEvent.KEYCODE_BUTTON_L1];
-+            float r1 = rawButtons[KeyEvent.KEYCODE_BUTTON_R1];
-+            mappedButtons[CanonicalButtonIndex.LEFT_SHOULDER] = l1;
-+            mappedButtons[CanonicalButtonIndex.RIGHT_SHOULDER] = r1;
-+
-+            float l2 = rawAxes[MotionEvent.AXIS_LTRIGGER];
-+            float r2 = rawAxes[MotionEvent.AXIS_RTRIGGER];
-+            mappedButtons[CanonicalButtonIndex.LEFT_TRIGGER] = l2;
-+            mappedButtons[CanonicalButtonIndex.RIGHT_TRIGGER] = r2;
-+
-+            float share = rawButtons[KeyEvent.KEYCODE_BUTTON_SELECT];
-+            float options = rawButtons[KeyEvent.KEYCODE_BUTTON_START];
-+            mappedButtons[CanonicalButtonIndex.BACK_SELECT] = share;
-+            mappedButtons[CanonicalButtonIndex.START] = options;
-+
-+            float thumbL = rawButtons[KeyEvent.KEYCODE_BUTTON_THUMBL];
-+            float thumbR = rawButtons[KeyEvent.KEYCODE_BUTTON_THUMBR];
-+            mappedButtons[CanonicalButtonIndex.LEFT_THUMBSTICK] = thumbL;
-+            mappedButtons[CanonicalButtonIndex.RIGHT_THUMBSTICK] = thumbR;
-+
-+            float mode = rawButtons[KeyEvent.KEYCODE_BUTTON_MODE];
-+            mappedButtons[CanonicalButtonIndex.META] = mode;
-+
-             mapHatAxisToDpadButtons(mappedButtons, rawAxes);
-             mapXYAxes(mappedAxes, rawAxes);
-             mapZAndRZAxesToRightStick(mappedAxes, rawAxes);
+diff --git a/chrome/android/java/src/org/chromium/chrome/browser/fullscreen/FullscreenHtmlApiHandler.java b/chrome/android/java/src/org/chromium/chrome/browser/fullscreen/FullscreenHtmlApiHandler.java
+index 274d82704979..9f2956e25f39 100644
+--- a/chrome/android/java/src/org/chromium/chrome/browser/fullscreen/FullscreenHtmlApiHandler.java
++++ b/chrome/android/java/src/org/chromium/chrome/browser/fullscreen/FullscreenHtmlApiHandler.java
+@@ -395,8 +395,8 @@ public class FullscreenHtmlApiHandler {
+      * @return fullscreen flags to be applied to system UI visibility.
+      */
+     private int applyEnterFullscreenUIFlags(int systemUiVisibility) {
+-        boolean showNavigationBar =
+-                mFullscreenOptions != null ? mFullscreenOptions.showNavigationBar() : false;
++        boolean showNavigationBar = false;
++                //mFullscreenOptions != null ? mFullscreenOptions.showNavigationBar() : false;
+         int flags = SYSTEM_UI_FLAG_FULLSCREEN;
+         flags |= View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
+         if (!showNavigationBar) {
 diff --git a/device/gamepad/gamepad_platform_data_fetcher_android.cc b/device/gamepad/gamepad_platform_data_fetcher_android.cc
 index 38a6cb45240d..29f971b78497 100644
 --- a/device/gamepad/gamepad_platform_data_fetcher_android.cc
@@ -114,10 +55,10 @@ index 38a6cb45240d..29f971b78497 100644
  
    pad.connected = true;
 diff --git a/third_party/blink/renderer/core/dom/document_or_shadow_root.h b/third_party/blink/renderer/core/dom/document_or_shadow_root.h
-index 6e0427e35662..2db92a951695 100644
+index cfed2ae42a7f..23f184e010f1 100644
 --- a/third_party/blink/renderer/core/dom/document_or_shadow_root.h
 +++ b/third_party/blink/renderer/core/dom/document_or_shadow_root.h
-@@ -62,6 +62,8 @@ class DocumentOrShadowRoot {
+@@ -72,6 +72,8 @@ class DocumentOrShadowRoot {
  
    static Element* pointerLockElement(Document& document) {
      UseCounter::Count(document, WebFeature::kDocumentPointerLockElement);
@@ -126,7 +67,7 @@ index 6e0427e35662..2db92a951695 100644
      const Element* target = document.PointerLockElement();
      if (!target)
        return nullptr;
-@@ -75,6 +77,7 @@ class DocumentOrShadowRoot {
+@@ -85,6 +87,7 @@ class DocumentOrShadowRoot {
        return const_cast<Element*>(target);
      }
      return document.AdjustedElement(*target);
@@ -134,17 +75,3 @@ index 6e0427e35662..2db92a951695 100644
    }
  
    static Element* pointerLockElement(ShadowRoot& shadow_root) {
-diff --git a/third_party/blink/renderer/modules/storage/storage_area.cc b/third_party/blink/renderer/modules/storage/storage_area.cc
-index 2c118818e682..1615ded6447f 100644
---- a/third_party/blink/renderer/modules/storage/storage_area.cc
-+++ b/third_party/blink/renderer/modules/storage/storage_area.cc
-@@ -100,6 +100,9 @@ String StorageArea::getItem(const String& key,
- bool StorageArea::setItem(const String& key,
-                           const String& value,
-                           ExceptionState& exception_state) {
-+  if (key == "video_codec_implementation_by_codec_key" && value == "{\"vp9\":\"libvpx\"}") {
-+    return setItem(key, "{\"vp9\":\"ExternalDecoder\"}", exception_state);
-+  }
-   if (!CanAccessStorage()) {
-     exception_state.ThrowSecurityError("access is denied for this document.");
-     return true;
