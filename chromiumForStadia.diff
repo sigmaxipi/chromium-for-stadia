@@ -1,8 +1,8 @@
 diff --git a/chrome/android/java/AndroidManifest.xml b/chrome/android/java/AndroidManifest.xml
-index 853ec785e2fe..67630c54ec30 100644
+index 5e699b5e3dca..c2f7700232b5 100644
 --- a/chrome/android/java/AndroidManifest.xml
 +++ b/chrome/android/java/AndroidManifest.xml
-@@ -17,6 +17,7 @@ by a child template that "extends" this file.
+@@ -22,6 +22,7 @@ by a child template that "extends" this file.
      <!-- android:versionCode and android:versionName is set through gyp. See build/common.gypi -->
  
      <uses-feature android:glEsVersion="0x00020000" />
@@ -10,42 +10,79 @@ index 853ec785e2fe..67630c54ec30 100644
  
      <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
      <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-@@ -127,6 +128,7 @@ by a child template that "extends" this file.
-          Java heap limit (32Mb on Nexus S, 48Mb on Xoom). -->
-     <application android:name="{% block application_name %}org.chromium.chrome.browser.ChromeApplication{% endblock %}"
+@@ -160,6 +161,7 @@ by a child template that "extends" this file.
+           {%- endif -%}
+           {% endblock %}"
          android:icon="@drawable/ic_launcher"
 +        android:banner="@drawable/ic_launcher"
          android:roundIcon="@drawable/ic_launcher_round"
          android:label="{% block application_label %}@string/app_name{% endblock %}"
          android:largeHeap="false"
-@@ -213,6 +215,7 @@ by a child template that "extends" this file.
+@@ -200,6 +202,7 @@ by a child template that "extends" this file.
              android:exported="true">
              <intent-filter>
                  <action android:name="android.intent.action.MAIN" />
 +                <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
                  <category android:name="android.intent.category.NOTIFICATION_PREFERENCES" />
-                 {% if enable_vr == "true" %}
-                 <category android:name="com.google.intent.category.DAYDREAM" />
+             </intent-filter>
+             <!-- Matches the common case of intents with no MIME type.
+diff --git a/chrome/android/java/src/org/chromium/chrome/browser/ChromeTabbedActivity.java b/chrome/android/java/src/org/chromium/chrome/browser/ChromeTabbedActivity.java
+index 696db6798f98..7e64a4ce4f6c 100644
+--- a/chrome/android/java/src/org/chromium/chrome/browser/ChromeTabbedActivity.java
++++ b/chrome/android/java/src/org/chromium/chrome/browser/ChromeTabbedActivity.java
+@@ -2239,6 +2239,18 @@ public class ChromeTabbedActivity extends ChromeActivity<ChromeActivityComponent
+
+     @Override
+     public boolean dispatchKeyEvent(KeyEvent event) {
++        if (event.getKeyCode() == 4) {
++                event = new KeyEvent (event.getDownTime(),
++                                      event.getEventTime(),
++                                      event.getAction(),
++                                      KeyEvent.KEYCODE_BUTTON_SELECT, // event.getCode(),
++                                      event.getRepeatCount(),
++                                      event.getMetaState(),
++                                      event.getDeviceId(),
++                                      316, // event.getScancode(),
++                                      event.getFlags(),
++                                      event.getSource());
++        }
+         Boolean result = KeyboardShortcuts.dispatchKeyEvent(event, this, mUIWithNativeInitialized);
+         return result != null ? result : super.dispatchKeyEvent(event);
+     }
 diff --git a/chrome/android/java/src/org/chromium/chrome/browser/fullscreen/FullscreenHtmlApiHandler.java b/chrome/android/java/src/org/chromium/chrome/browser/fullscreen/FullscreenHtmlApiHandler.java
-index 274d82704979..9f2956e25f39 100644
+index 7e1cb26eedfb..ed196c455bb9 100644
 --- a/chrome/android/java/src/org/chromium/chrome/browser/fullscreen/FullscreenHtmlApiHandler.java
 +++ b/chrome/android/java/src/org/chromium/chrome/browser/fullscreen/FullscreenHtmlApiHandler.java
-@@ -395,8 +395,8 @@ public class FullscreenHtmlApiHandler {
+@@ -571,8 +571,7 @@ public class FullscreenHtmlApiHandler implements ActivityStateListener, WindowFo
       * @return fullscreen flags to be applied to system UI visibility.
       */
      private int applyEnterFullscreenUIFlags(int systemUiVisibility) {
 -        boolean showNavigationBar =
 -                mFullscreenOptions != null ? mFullscreenOptions.showNavigationBar() : false;
 +        boolean showNavigationBar = false;
-+                //mFullscreenOptions != null ? mFullscreenOptions.showNavigationBar() : false;
          int flags = SYSTEM_UI_FLAG_FULLSCREEN;
          flags |= View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
          if (!showNavigationBar) {
+diff --git a/device/gamepad/gamepad_data_fetcher.cc b/device/gamepad/gamepad_data_fetcher.cc
+index c47b76bf9e20..3fd5b38702c6 100644
+--- a/device/gamepad/gamepad_data_fetcher.cc
++++ b/device/gamepad/gamepad_data_fetcher.cc
+@@ -97,8 +97,8 @@ void GamepadDataFetcher::UpdateGamepadStrings(const std::string& product_name,
+
+   // Set GamepadMapping::kStandard if the gamepad has a standard mapping, or
+   // GamepadMapping::kNone otherwise.
+-  pad.mapping =
+-      has_standard_mapping ? GamepadMapping::kStandard : GamepadMapping::kNone;
++  pad.mapping = GamepadMapping::kStandard;
++      // has_standard_mapping ? GamepadMapping::kStandard : GamepadMapping::kNone;
+ }
+
+ // static
 diff --git a/device/gamepad/gamepad_platform_data_fetcher_android.cc b/device/gamepad/gamepad_platform_data_fetcher_android.cc
-index 38a6cb45240d..29f971b78497 100644
+index 6eb0a7330fe2..77d8d78e737f 100644
 --- a/device/gamepad/gamepad_platform_data_fetcher_android.cc
 +++ b/device/gamepad/gamepad_platform_data_fetcher_android.cc
-@@ -98,7 +98,7 @@ static void JNI_GamepadList_SetGamepadData(
+@@ -99,7 +99,7 @@ static void JNI_GamepadList_SetGamepadData(
      base::android::ConvertJavaStringToUTF16(env, devicename, &gamepad_id);
      pad.SetID(gamepad_id);
  
@@ -55,23 +92,22 @@ index 38a6cb45240d..29f971b78497 100644
  
    pad.connected = true;
 diff --git a/third_party/blink/renderer/core/dom/document_or_shadow_root.h b/third_party/blink/renderer/core/dom/document_or_shadow_root.h
-index cfed2ae42a7f..23f184e010f1 100644
+index 5bb9914dc6d6..223d61296495 100644
 --- a/third_party/blink/renderer/core/dom/document_or_shadow_root.h
 +++ b/third_party/blink/renderer/core/dom/document_or_shadow_root.h
-@@ -72,6 +72,8 @@ class DocumentOrShadowRoot {
- 
+@@ -72,10 +72,11 @@ class DocumentOrShadowRoot {
+
    static Element* pointerLockElement(Document& document) {
      UseCounter::Count(document, WebFeature::kDocumentPointerLockElement);
+-    const Element* target = document.PointerLockElement();
+-    if (!target)
+-      return nullptr;
+-    return document.AdjustedElement(*target);
 +    return Fullscreen::FullscreenElementForBindingFrom(document);
-+    /*
-     const Element* target = document.PointerLockElement();
-     if (!target)
-       return nullptr;
-@@ -85,6 +87,7 @@ class DocumentOrShadowRoot {
-       return const_cast<Element*>(target);
-     }
-     return document.AdjustedElement(*target);
-+    */
++    // const Element* target = document.PointerLockElement();
++    // if (!target)
++    //   return nullptr;
++    // return document.AdjustedElement(*target);
    }
- 
+
    static Element* pointerLockElement(ShadowRoot& shadow_root) {
